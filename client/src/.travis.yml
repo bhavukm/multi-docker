@@ -1,0 +1,21 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t bhavukm/react-test -f ./client/Dockerfile.dev ./client
+  
+script:
+  - docker run -e CI=true bhavukm/react-test npm test
+
+after_success:
+  - docker build -t bhavukm/multi-client ./client
+  - docker build -t bhavukm/multi-nginx ./nginx
+  - docker build -t bhavukm/multi-server ./server
+  - docker build -t bhavukm/multi-worker ./worker
+  
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  - docker push bhavukm/multi-client
+  - docker push bhavukm/multi-nginx
+  - docker push bhavukm/multi-server
+  - docker push bhavukm/multi-worker
