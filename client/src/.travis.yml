@@ -6,6 +6,7 @@ services:
   - docker
 
 before_install:
+  - gem install rake
   - docker build -t bhavukm/react-test -f ./client/Dockerfile.dev ./client
   
 script:
